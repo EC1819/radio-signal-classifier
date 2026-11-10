@@ -8,11 +8,11 @@ def load_radioml(path):
         # file was saved with Python 2, so latin1 is needed to read it
         data = pickle.load(f, encoding="latin1")
 
-    #Will the store the arrays containing radio signals
+    # Store the arrays containing radio signals
     signal_groups = []
-    #Will store the corresponding modulation name
+    # Store the corresponding modulation names
     mods = []
-    #Will store the SNR of each signal
+    # Store the SNR of each signal
     snrs = []
 
     for (modulation, snr), signals in data.items():
