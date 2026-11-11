@@ -4,3 +4,4 @@ Decision Tree,0.44190000000000007,0.0056316072306225266,{'decisiontreeclassifier
 k-NN,0.41755,0.002865309756378889,{'kneighborsclassifier__n_neighbors': 31}
 Logistic Regression (L2),0.4154,0.00486209831245729,{'logisticregression__C': 10}
 "Logistic Regression (L1, saga)",0.4152,0.00443395985547907,{'logisticregression__C': 100}
+Baseline (most frequent),0.09079999999999999,0.00010000000000000007,

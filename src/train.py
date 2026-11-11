@@ -1,7 +1,8 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.dummy import DummyClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -57,6 +58,14 @@ models = {
 }
 
 results = {}
+
+baseline_scores = cross_val_score(DummyClassifier(strategy="most_frequent"), X_tune, y_tune, cv=5)
+results["Baseline (most frequent)"] = {
+    "mean_accuracy": baseline_scores.mean(),
+    "std": baseline_scores.std(),
+    "best_params": None,
+}
+print(f"Baseline: {baseline_scores.mean():.3f} ± {baseline_scores.std():.3f}")
 
 for name, (model, param_grid) in models.items():
     print(f"\nTraining {name}")
