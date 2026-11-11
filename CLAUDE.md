@@ -9,7 +9,7 @@ src/load_data.py
 src/logistic_scratch.py (all of it)
 (add yours here each day)
 Keep code simple and readable. Use only NumPy, pandas, matplotlib, SciPy,
-scikit-learn, FastAPI and Uvicorn. Ask before adding any other library.
+scikit-learn, FastAPI, Uvicorn and pytest. Ask before adding any other library.
 
 Never use the test set for tuning or model choice.
 Use the virtual environment in .venv.
