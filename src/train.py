@@ -1,3 +1,5 @@
+import os
+import joblib
 import pandas as pd
 from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
 from sklearn.pipeline import make_pipeline
@@ -8,7 +10,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
-df = pd.read_csv("../data/features.csv")
+df = pd.read_csv("data/features.csv")
 X = df.drop(columns=["mod", "snr"])
 y = df["mod"]
 snrs = df["snr"]
@@ -37,11 +39,11 @@ models = {
         {"kneighborsclassifier__n_neighbors": [5, 15, 31, 61]},
     ),
     "Logistic Regression (L2)": (
-        LogisticRegression(penalty="l2", solver="lbfgs", max_iter=1000),
+        LogisticRegression(l1_ratio=0, solver="lbfgs", max_iter=1000),
         {"logisticregression__C": [0.01, 0.1, 1, 10, 100]},
     ),
     "Logistic Regression (L1, saga)": (
-        LogisticRegression(penalty="l1", solver="saga", max_iter=5000),
+        LogisticRegression(l1_ratio=1, solver="saga", max_iter=5000),
         {"logisticregression__C": [0.01, 0.1, 1, 10, 100]},
     ),
     "Decision Tree": (
@@ -83,5 +85,15 @@ for name, (model, param_grid) in models.items():
     print(f"{search.best_score_:.3f} ± {results[name]['std']:.3f}  {search.best_params_}")
 
 results_df = pd.DataFrame(results).T.sort_values("mean_accuracy", ascending=False)
-results_df.to_csv("../figures/cv_results.csv")
+results_df.to_csv("figures/cv_results.csv")
 print(results_df)
+
+# Chosen model: Random Forest, clear winner in the bake-off above.
+# Refit on the full training set (not just the 20k tuning sample) and save it.
+final_pipeline = make_pipeline(StandardScaler(), RandomForestClassifier(random_state=42))
+final_pipeline.set_params(**results["Random Forest"]["best_params"])
+final_pipeline.fit(X_train, y_train)
+
+os.makedirs("models", exist_ok=True)
+joblib.dump(final_pipeline, "models/model.joblib")
+print("\nSaved final pipeline to models/model.joblib")

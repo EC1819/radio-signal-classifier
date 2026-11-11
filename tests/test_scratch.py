@@ -1,4 +1,8 @@
+from pathlib import Path
+
+import numpy as np
 import pandas as pd
+import pytest
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -6,6 +10,10 @@ from sklearn.linear_model import LogisticRegression
 from src.logistic_scratch import ScratchLogisticRegression
 
 
+@pytest.mark.skipif(
+    not Path("data/features.csv").exists(),
+    reason="data/features.csv not found - run the Day 3 feature-extraction step first",
+)
 def test_scratch_agrees_with_sklearn():
     df = pd.read_csv("data/features.csv")
     subset = df[df["mod"].isin(["BPSK", "QPSK"]) & (df["snr"] >= 0)]
@@ -27,7 +35,7 @@ def test_scratch_agrees_with_sklearn():
     scratch_model = ScratchLogisticRegression(learning_rate=0.5, n_iters=1000)
     scratch_model.fit(X_train_scaled, y_train)
 
-    sklearn_model = LogisticRegression(penalty=None, max_iter=5000)
+    sklearn_model = LogisticRegression(C=np.inf, max_iter=5000)
     sklearn_model.fit(X_train_scaled, y_train)
 
     scratch_preds = scratch_model.predict(X_test_scaled)
